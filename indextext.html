@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat für Umschüler</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #0f0f0f;
+            color: rgb(22, 187, 22);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        #chatbox {
+            flex: 1;
+            padding: 20px;
+            border: 1px solid rgba(0, 255, 0, 0.308);
+            background-color: #000;
+            overflow-y: auto;
+            margin: 20px;
+            border-radius: 8px;
+        }
+
+        #messageInput, #usernameInput {
+            padding: 10px;
+            border: 1px solid rgba(0, 255, 0, 0.356);
+            background-color: #333;
+            color: #0f0;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        #messageInput {
+            flex: 1;
+            margin-right: 10px;
+        }
+
+        #sendButton {
+            width: 100px;
+            padding: 10px;
+            border: 1px solid #0f0;
+            background-color: #000;
+            color: #0f0;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        #sendButton:hover {
+            background-color: #0a0;
+        }
+
+        #inputContainer {
+            display: flex;
+            justify-content: center;
+            padding: 10px;
+            background-color: #000;
+            border-top: 1px solid rgba(0, 255, 0, 0.308);
+        }
+
+        .message {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            background-color: #222;
+        }
+
+        .message span {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div id="chatbox">
+        <!-- Nachrichten werden hier angezeigt -->
+    </div>
+    <div id="inputContainer">
+        <input id="usernameInput" type="text" placeholder="Username" />
+        <input id="messageInput" type="text" placeholder="Gib deine Nachricht ein..." />
+        <button id="sendButton">Senden</button>
+    </div>
+    <script>
+        const chatbox = document.getElementById('chatbox');
+        const messageInput = document.getElementById('messageInput');
+        const usernameInput = document.getElementById('usernameInput');
+        const sendButton = document.getElementById('sendButton');
+
+        // Nachrichten aus dem lokalen Speicher laden
+        function loadMessages() {
+            const messages = JSON.parse(localStorage.getItem('messages')) || [];
+            chatbox.innerHTML = '';
+            messages.forEach(message => {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'message';
+                messageDiv.innerHTML = `<span>${message.username}</span>: ${message.content}`;
+                chatbox.appendChild(messageDiv);
+            });
+            chatbox.scrollTop = chatbox.scrollHeight;
+        }
+
+        // Nachricht senden
+        function sendMessage() {
+            const username = usernameInput.value.trim();
+            const content = messageInput.value.trim();
+            if (content === '') return; // Verhindert das Senden leerer Nachrichten
+
+            const message = {
+                username: username || 'Anonymous',
+                content: content
+            };
+
+            const messages = JSON.parse(localStorage.getItem('messages')) || [];
+            messages.push(message);
+            localStorage.setItem('messages', JSON.stringify(messages));
+
+            messageInput.value = ''; // Eingabefeld zurücksetzen
+            loadMessages(); // Nachrichten neu laden
+        }
+
+        // Send-Button klicken
+        sendButton.onclick = sendMessage;
+
+        // Nachricht senden mit Enter-Taste
+        messageInput.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault(); // Verhindert das Einfügen eines Zeilenumbruchs
+                sendMessage(); // Nachricht senden
+            }
+        });
+
+        // Nachrichten beim Laden der Seite abrufen
+        loadMessages();
+    </script>
+</body>
+</html>
