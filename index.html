@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grone Projektarbeit</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <style>
+
+
+* {margin: 0; padding: 0}
+
+canvas {
+            display: block;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+
+
+
+        body {
+            font-family: monospace;
+            font-size: 14px;
+            background-color: #000000;
+            color: rgb(22, 187, 22);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+        }
+
+        #chatboxAll {
+            width: 100%;
+            max-width: 70%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 92px; /* Abstand vom Header */
+            flex: 1;
+            position: relative; /* Ermöglicht absolute Positionierung der Kinder */
+        }
+
+        #chatbox {
+            flex: 1;
+            width: 100%;
+            padding: 20px;
+            border-left: 1px solid rgba(0, 255, 0, 0.308);
+            border-right: 1px solid rgba(0, 255, 0, 0.308);
+            background-color: #142b199d;
+            overflow-y: auto;
+            border-radius: 8px;
+            margin-bottom: 80px; /* Platz für den Input-Container */
+        }
+
+        #inputContainer {
+            position: fixed;
+            bottom: 0;
+            width: 70%; /* Gleiche Breite wie der chatboxAll Container */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background-color: #0c1a0fb7;
+            border: 1px solid rgba(0, 255, 0, 0.308);
+            z-index: 1000;
+        }
+
+        #messageInput, #usernameInput, #fileInput {
+            padding: 10px;
+            border: 1px solid rgba(0, 255, 0, 0.356);
+            background-color: #333;
+            color: #0f0;
+            border-radius: 5px;
+            box-sizing: border-box;
+            margin: 0 10px;
+        }
+
+        #messageInput {
+            flex: 1;
+        }
+
+        #sendButton {
+            width: 100px;
+            padding: 10px;
+            border: 1px solid #0f0;
+            background-color: #000;
+            color: #0f0;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        #sendButton:hover {
+            background-color: #0a0;
+        }
+
+        .message {
+            font-size: 16px;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            background-color: #050505;
+            white-space: pre-wrap; /* Erhält die Formatierung */
+            cursor: pointer; /* Zeigt, dass die Nachricht anklickbar ist */
+            transition: background-color 0.3s, color 0.3s; /* Für sanfte Übergänge */
+        }
+
+        .message:hover {
+            background-color: #00ff2a3a; /* Farbe ändern, wenn der Cursor darüber fährt */
+        }
+
+        .binary {
+            font-family: monospace; /* Stellt sicher, dass die Binäranzeige gut aussieht */
+        }
+
+        .username {
+            color: #FFD700; /* Farbe für den Benutzernamen (z.B. Gold) */
+            font-weight: bold;
+        }
+
+        nav {
+            font-size: 20px;
+            font-weight: bold;
+            background-color: #0c1a0fb7;
+            border: 1px solid rgba(0, 255, 0, 0.308);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            width: 70%;
+            position: fixed;
+            top: 0;
+            z-index: 1000;
+        }
+
+        nav ul {
+            margin: 0;
+            padding: 0;
+            list-style-type: none;
+            display: flex;
+        }
+
+        nav ul li {
+            position: relative;
+            margin: 0 10px;
+        }
+
+        nav ul li a {
+            background-color: #222;
+            padding: 15px 20px;
+            display: block;
+            color: rgb(22, 187, 22);
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+        nav ul li a:hover {
+            background-color: rgba(0, 255, 0, 0.2);
+        }
+
+        nav ul li ul {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            padding: 5px;
+            background-color: #000;
+            border: 1px solid rgba(0, 255, 0, 0.308);
+        }
+
+        nav ul li ul li {
+            width: 200px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        nav ul li:hover ul {
+            display: block;
+        }
+
+        .fileInputContainer {
+            position: relative;
+            display: inline-block;
+            margin: 0 10px;
+        }
+
+        .fileInputContainer input[type="file"] {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .fileInputContainer i {
+            font-size: 24px;
+            color: #0f0;
+            cursor: pointer;
+        }
+
+        .fileInputContainer i:hover {
+            color: #0a0;
+        }
+    </style>
+</head>
+<body>
+
+
+
+
+
+    <nav>
+        <ul>
+            <li><a href="#">Zuhause</a></li>
+            <li><a href="#">Binärrechner</a></li>
+            <li><a href="#">Schüler Projekte</a>
+                <ul>
+                    <li><a href="/Schwarzschildradius/index.html">Schwarzschildradius</a></li>
+                    <li><a href="/Schwarzschildradius/code.html">Schwarzschildradius-JS-Code</a></li>
+                    <li><a href="#">Seite3</a></li>
+                </ul>
+            </li>
+        </ul>
+    </nav>
+
+
+  
+
+
+    <div id="chatboxAll">
+        <div id="chatbox">
+            <!-- Nachrichten werden hier angezeigt -->
+        </div>
+    </div>
+    <div id="inputContainer">
+        <input type="text" id="usernameInput" placeholder="Benutzername">
+        <div class="fileInputContainer">
+            <i class="fas fa-paperclip"></i>
+            <input type="file" id="fileInput">
+        </div>
+        <input type="text" id="messageInput" placeholder="Nachricht eingeben">
+        <button id="sendButton">Senden</button>
+    </div>
+
+
+
+    <canvas>
+            
+    </canvas>
+
+
+    <script>
+        const chatbox = document.getElementById('chatbox');
+        const messageInput = document.getElementById('messageInput');
+        const usernameInput = document.getElementById('usernameInput');
+        const sendButton = document.getElementById('sendButton');
+        const fileInput = document.getElementById('fileInput');
+        let lastMessageId = 0; // Die ID der letzten geladenen Nachricht
+
+        const messageState = new Map(); // Map, um den Zustand der Nachrichten zu speichern
+
+        function stringToBinary(string) {
+            return string.split('')
+                .map(char => char.charCodeAt(0).toString(2).padStart(8, '0'))
+                .join(' ');
+        }
+
+        // Funktion zum Laden neuer Nachrichten
+        function loadNewMessages() {
+            fetch(`get_new_messages.php?last_id=${lastMessageId}`)
+                .then(response => response.json())
+                .then(messages => {
+                    if (messages.length > 0) {
+                        messages.forEach(message => {
+                            if (message.id > lastMessageId) {
+                                const messageDiv = document.createElement('div');
+                                messageDiv.className = 'message';
+                                messageDiv.innerHTML = `<span class="username">${message.username}</span>\u0009: ${message.content || ''}`;
+                                if (message.image) {
+                                    const img = document.createElement('img');
+                                    img.src = message.image;
+                                    messageDiv.appendChild(img);
+                                }
+                                chatbox.appendChild(messageDiv);
+                                lastMessageId = message.id; // Update lastMessageId
+
+                                // Speichern des ursprünglichen Inhalts der Nachricht
+                                messageState.set(messageDiv, message.content);
+
+                                // Event Listener für das Klicken auf die Nachricht
+                                messageDiv.addEventListener('click', () => {
+                                    const currentContent = messageDiv.innerText.split(': ')[1];
+                                    if (currentContent === messageState.get(messageDiv)) {
+                                        const binary = stringToBinary(currentContent);
+                                        messageDiv.innerHTML = `<span class="username">${message.username}</span>\u0009: <span class="binary">${binary}</span>`;
+                                    } else {
+                                        messageDiv.innerHTML = `<span class="username">${message.username}</span>\u0009: ${messageState.get(messageDiv)}`;
+                                    }
+                                    
+                                });
+                            }
+                        });
+                        chatbox.scrollTop = chatbox.scrollHeight; // Scroll to bottom
+                    }
+                })
+                .catch(error => console.error('Fetch error:', error));
+        }
+
+        // Funktion zum Senden einer Nachricht
+        function sendMessage() {
+            const username = usernameInput.value.trim();
+            const content = messageInput.value.trim();
+            const file = fileInput.files[0];
+
+            if (content === '' && !file) return; // Verhindert das Senden leerer Nachrichten oder ohne Bild
+
+            const formData = new FormData();
+            formData.append('username', username);
+            formData.append('content', content);
+            if (file) {
+                formData.append('file', file);
+            }
+
+            fetch('post_message.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.text())
+            .then(() => {
+                messageInput.value = ''; // Eingabefeld zurücksetzen
+                fileInput.value = ''; // Datei-Eingabefeld zurücksetzen
+                loadNewMessages(); // Nachrichten neu laden
+            })
+            .catch(error => console.error('Fetch error:', error));
+        }
+
+        // Send-Button klicken
+        sendButton.onclick = function(event) {
+            event.preventDefault(); // Verhindert das Standard-Formularverhalten
+            sendMessage();
+        };
+
+        // Nachricht senden mit Enter-Taste
+        messageInput.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault(); // Verhindert das Einfügen eines Zeilenumbruchs
+                sendMessage(); // Nachricht senden
+            }
+        });
+
+        // Nachrichten alle 500 Millisekunden aktualisieren
+        setInterval(loadNewMessages, 500);
+
+
+
+
+
+
+
+
+                                // Initialising der canvas
+var canvas = document.querySelector('canvas'),
+    ctx = canvas.getContext('2d');
+
+// SEinstellung der größe für die canvas
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+// Einstellung letters
+var letters = '01';
+letters = letters.split('');
+
+// SEinstellung der columns
+var fontSize = 10,
+    columns = canvas.width / fontSize;
+
+// Einstellung der drops
+var drops = [];
+for (var i = 0; i < columns; i++) {
+  drops[i] = 1;
+}
+
+// Einstellung der draw Funktion
+function draw() {
+  ctx.fillStyle = 'rgba(0, 0, 0, .1)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  for (var i = 0; i < drops.length; i++) {
+    var text = letters[Math.floor(Math.random() * letters.length)];
+    ctx.fillStyle = 'green';
+    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+    drops[i]++;
+    if (drops[i] * fontSize > canvas.height && Math.random() > .95) {
+      drops[i] = 0;
+    }
+  }
+}
+
+// Wiederholung der Animation
+setInterval(draw, 33);
+
+
+
+
+    </script>
+</body>
+</html>
